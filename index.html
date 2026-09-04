@@ -234,7 +234,7 @@
         <input type="hidden" name="_subject" value="New Bee See Bytes Website Enquiry" />
         <input type="hidden" name="_captcha" value="false" />
         <input type="hidden" name="_template" value="table" />
-        <input type="hidden" name="_next" value="" />
+        <input type="hidden" name="_next" value="https://beeseebytes.in/?submitted=1" />
 
         <div class="form-row">
           <label>Full Name *<input name="name" type="text" required placeholder="Your name" /></label>
@@ -295,5 +295,45 @@
   <a class="whatsapp" href="https://wa.me/917275476067" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">◔</a>
 
   <script src="script.js"></script>
-</body>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.get("submitted") === "1") {
+        const form = document.getElementById("contactForm");
+
+        if (form) {
+            form.style.display = "none";
+
+            const message = document.createElement("div");
+            message.style.cssText = `
+                max-width: 700px;
+                margin: 40px auto;
+                padding: 45px 30px;
+                text-align: center;
+                background: #3b2418;
+                color: #fff;
+                border-radius: 20px;
+            `;
+
+            message.innerHTML = `
+                <div style="font-size:48px;">✓</div>
+                <h2 style="margin:10px 0;color:#fff;">Thank You!</h2>
+                <p style="font-size:17px;line-height:1.6;">
+                    Your enquiry has been submitted successfully.<br>
+                    Our team will contact you shortly.
+                </p>
+                <a href="https://beeseebytes.in/"
+                   style="display:inline-block;margin-top:15px;
+                   padding:12px 24px;background:#d99a16;
+                   color:#fff;text-decoration:none;border-radius:8px;">
+                   Back to Website
+                </a>
+            `;
+
+            form.parentNode.insertBefore(message, form);
+        }
+    }
+});
+</script> </body>
 </html>
