@@ -1,10 +1,10 @@
 /* =========================================================
    BEESEEBYTES
    AI-POWERED DIGITAL MARKETING & AUTOMATION
-   Main JavaScript
+   COMPLETE JAVASCRIPT
    ========================================================= */
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
 
   /* =======================================================
      MOBILE MENU
@@ -15,25 +15,39 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (menuToggle && nav) {
 
-    menuToggle.addEventListener("click", function () {
+    menuToggle.addEventListener("click", () => {
+
       nav.classList.toggle("active");
 
-      if (nav.classList.contains("active")) {
-        menuToggle.setAttribute("aria-expanded", "true");
-      } else {
-        menuToggle.setAttribute("aria-expanded", "false");
-      }
+      const isOpen = nav.classList.contains("active");
+
+      menuToggle.setAttribute(
+        "aria-expanded",
+        isOpen ? "true" : "false"
+      );
+
+      menuToggle.innerHTML = isOpen ? "✕" : "☰";
+
     });
 
-    // Close menu after clicking a navigation link
-    const navLinks = nav.querySelectorAll("a");
 
-    navLinks.forEach(function (link) {
-      link.addEventListener("click", function () {
+    nav.querySelectorAll("a").forEach(link => {
+
+      link.addEventListener("click", () => {
+
         nav.classList.remove("active");
-        menuToggle.setAttribute("aria-expanded", "false");
+
+        menuToggle.setAttribute(
+          "aria-expanded",
+          "false"
+        );
+
+        menuToggle.innerHTML = "☰";
+
       });
+
     });
+
   }
 
 
@@ -41,9 +55,7 @@ document.addEventListener("DOMContentLoaded", function () {
      SMOOTH SCROLL
      ======================================================= */
 
-  const smoothLinks = document.querySelectorAll('a[href^="#"]');
-
-  smoothLinks.forEach(function (link) {
+  document.querySelectorAll('a[href^="#"]').forEach(link => {
 
     link.addEventListener("click", function (event) {
 
@@ -55,99 +67,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const target = document.querySelector(targetId);
 
-      if (target) {
-        event.preventDefault();
-
-        target.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
-      }
-    });
-
-  });
-
-
-  /* =======================================================
-     CONTACT FORM
-     ======================================================= */
-
-  const contactForm = document.querySelector("form");
-
-  if (contactForm) {
-
-    contactForm.addEventListener("submit", function () {
-
-      /*
-       FormSubmit handles the actual email submission.
-       This code only saves a small status locally.
-      */
-
-      try {
-        sessionStorage.setItem("beeSeeBytesFormSubmitted", "true");
-      } catch (error) {
-        console.log("Session storage unavailable.");
+      if (!target) {
+        return;
       }
 
-    });
+      event.preventDefault();
 
-  }
-
-
-  /* =======================================================
-     THANK YOU MESSAGE
-     ======================================================= */
-
-  const urlParams = new URLSearchParams(window.location.search);
-  const submitted = urlParams.get("submitted");
-
-  const thankYou = document.querySelector(".thank-you");
-
-  if (submitted === "1" && thankYou) {
-
-    if (contactForm) {
-      contactForm.style.display = "none";
-    }
-
-    thankYou.classList.add("show");
-
-    // Scroll to thank-you message
-    setTimeout(function () {
-      thankYou.scrollIntoView({
+      target.scrollIntoView({
         behavior: "smooth",
-        block: "center"
+        block: "start"
       });
-    }, 300);
-
-  }
-
-
-  /* =======================================================
-     GET A QUOTE BUTTONS
-     ======================================================= */
-
-  const quoteButtons = document.querySelectorAll(
-    'a[href="#contact"], button[data-target="#contact"]'
-  );
-
-  quoteButtons.forEach(function (button) {
-
-    button.addEventListener("click", function () {
-
-      const contactSection = document.querySelector("#contact");
-
-      if (contactSection) {
-
-        setTimeout(function () {
-
-          contactSection.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-          });
-
-        }, 50);
-
-      }
 
     });
 
@@ -155,90 +84,36 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =======================================================
-     SERVICE / PACKAGE QUOTE BUTTON
+     NAVBAR SCROLL EFFECT
      ======================================================= */
 
-  const serviceLinks = document.querySelectorAll(
-    ".service-card a, .package-card a"
-  );
+  const header = document.querySelector("header");
 
-  serviceLinks.forEach(function (link) {
+  if (header) {
 
-    link.addEventListener("click", function () {
+    const updateHeader = () => {
 
-      const serviceName =
-        this.closest(".service-card, .package-card")
-          ?.querySelector("h3")
-          ?.textContent
-          ?.trim();
+      if (window.scrollY > 30) {
 
-      if (serviceName) {
+        header.classList.add("scrolled");
 
-        try {
-          sessionStorage.setItem(
-            "beeSeeBytesSelectedService",
-            serviceName
-          );
-        } catch (error) {
-          console.log("Could not save selected service.");
-        }
+      } else {
+
+        header.classList.remove("scrolled");
 
       }
 
-    });
+    };
 
-  });
-
-
-  /* =======================================================
-     AUTO SELECT SERVICE IN CONTACT FORM
-     ======================================================= */
-
-  const serviceSelect = document.querySelector(
-    'select[name="service"], select#service'
-  );
-
-  let selectedService = null;
-
-  try {
-    selectedService = sessionStorage.getItem(
-      "beeSeeBytesSelectedService"
+    window.addEventListener(
+      "scroll",
+      updateHeader,
+      { passive: true }
     );
-  } catch (error) {
-    selectedService = null;
-  }
 
-  if (serviceSelect && selectedService) {
-
-    const options = Array.from(serviceSelect.options);
-
-    const matchingOption = options.find(function (option) {
-
-      return option.textContent
-        .trim()
-        .toLowerCase()
-        .includes(selectedService.toLowerCase());
-
-    });
-
-    if (matchingOption) {
-      serviceSelect.value = matchingOption.value;
-    }
+    updateHeader();
 
   }
-
-
-  /* =======================================================
-     CURRENT YEAR IN FOOTER
-     ======================================================= */
-
-  const yearElements = document.querySelectorAll(
-    ".current-year, #current-year"
-  );
-
-  yearElements.forEach(function (element) {
-    element.textContent = new Date().getFullYear();
-  });
 
 
   /* =======================================================
@@ -246,22 +121,21 @@ document.addEventListener("DOMContentLoaded", function () {
      ======================================================= */
 
   const revealElements = document.querySelectorAll(
-    ".service-card, .package-card, .why-card, .process-card, .ai-card"
+    ".service-card, .package-card, .why-card, .process-card, .ai-feature, .growth-flow-item"
   );
 
   if ("IntersectionObserver" in window) {
 
-    const observer = new IntersectionObserver(
-      function (entries, observer) {
+    const revealObserver = new IntersectionObserver(
+      entries => {
 
-        entries.forEach(function (entry) {
+        entries.forEach(entry => {
 
           if (entry.isIntersecting) {
 
-            entry.target.style.opacity = "1";
-            entry.target.style.transform = "translateY(0)";
+            entry.target.classList.add("visible");
 
-            observer.unobserve(entry.target);
+            revealObserver.unobserve(entry.target);
 
           }
 
@@ -273,14 +147,100 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     );
 
-    revealElements.forEach(function (element) {
 
-      element.style.opacity = "0";
-      element.style.transform = "translateY(15px)";
-      element.style.transition =
-        "opacity 0.6s ease, transform 0.6s ease";
+    revealElements.forEach((element, index) => {
 
-      observer.observe(element);
+      element.style.transitionDelay =
+        `${Math.min(index * 0.04, 0.25)}s`;
+
+      revealObserver.observe(element);
+
+    });
+
+  } else {
+
+    revealElements.forEach(element => {
+      element.classList.add("visible");
+    });
+
+  }
+
+
+  /* =======================================================
+     HERO VISUAL PARALLAX
+     ======================================================= */
+
+  const heroVisual = document.querySelector(".hero-visual");
+
+  if (heroVisual && window.innerWidth > 780) {
+
+    heroVisual.addEventListener("mousemove", event => {
+
+      const rect = heroVisual.getBoundingClientRect();
+
+      const x =
+        (event.clientX - rect.left) /
+        rect.width - 0.5;
+
+      const y =
+        (event.clientY - rect.top) /
+        rect.height - 0.5;
+
+
+      const logo = heroVisual.querySelector(
+        ".hero-logo-card"
+      );
+
+      const cards = heroVisual.querySelectorAll(
+        ".floating-card"
+      );
+
+
+      if (logo) {
+
+        logo.style.transform =
+          `translate(${x * 10}px, ${y * 10}px)`;
+
+      }
+
+
+      cards.forEach((card, index) => {
+
+        const strength = 5 + index * 1.5;
+
+        card.style.marginLeft =
+          `${x * strength}px`;
+
+        card.style.marginTop =
+          `${y * strength}px`;
+
+      });
+
+    });
+
+
+    heroVisual.addEventListener("mouseleave", () => {
+
+      const logo = heroVisual.querySelector(
+        ".hero-logo-card"
+      );
+
+      const cards = heroVisual.querySelectorAll(
+        ".floating-card"
+      );
+
+
+      if (logo) {
+        logo.style.transform = "";
+      }
+
+
+      cards.forEach(card => {
+
+        card.style.marginLeft = "";
+        card.style.marginTop = "";
+
+      });
 
     });
 
@@ -288,28 +248,402 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* =======================================================
-     ESC KEY - CLOSE MOBILE MENU
+     AI SYSTEM NODE INTERACTION
      ======================================================= */
 
-  document.addEventListener("keydown", function (event) {
+  const aiNodes = document.querySelectorAll(".ai-node");
 
-    if (event.key === "Escape") {
+  aiNodes.forEach(node => {
 
-      if (nav) {
-        nav.classList.remove("active");
-      }
+    node.addEventListener("mouseenter", () => {
 
-      if (menuToggle) {
-        menuToggle.setAttribute("aria-expanded", "false");
-      }
+      aiNodes.forEach(other => {
 
-    }
+        if (other !== node) {
+          other.style.opacity = "0.45";
+        }
+
+      });
+
+    });
+
+
+    node.addEventListener("mouseleave", () => {
+
+      aiNodes.forEach(other => {
+
+        other.style.opacity = "1";
+
+      });
+
+    });
 
   });
 
 
   /* =======================================================
-     CONSOLE MESSAGE
+     SERVICE CARD HOVER
+     ======================================================= */
+
+  const serviceCards =
+    document.querySelectorAll(".service-card");
+
+
+  serviceCards.forEach(card => {
+
+    card.addEventListener("mouseenter", () => {
+
+      card.style.zIndex = "5";
+
+    });
+
+
+    card.addEventListener("mouseleave", () => {
+
+      card.style.zIndex = "";
+
+    });
+
+  });
+
+
+  /* =======================================================
+     PACKAGE CARD HOVER
+     ======================================================= */
+
+  const packageCards =
+    document.querySelectorAll(".package-card");
+
+
+  packageCards.forEach(card => {
+
+    card.addEventListener("mouseenter", () => {
+
+      card.style.zIndex = "5";
+
+    });
+
+
+    card.addEventListener("mouseleave", () => {
+
+      card.style.zIndex = "";
+
+    });
+
+  });
+
+
+  /* =======================================================
+     SELECT SERVICE FROM QUOTE BUTTON
+     ======================================================= */
+
+  const serviceSelect =
+    document.querySelector("#service");
+
+
+  document.querySelectorAll(
+    ".service-link, .package-card .btn"
+  ).forEach(button => {
+
+    button.addEventListener("click", () => {
+
+      const parent =
+        button.closest(
+          ".service-card, .package-card"
+        );
+
+
+      if (!parent || !serviceSelect) {
+        return;
+      }
+
+
+      const title =
+        parent.querySelector("h3");
+
+
+      if (!title) {
+        return;
+      }
+
+
+      const serviceName =
+        title.textContent.trim();
+
+
+      const option =
+        Array.from(
+          serviceSelect.options
+        ).find(option =>
+          option.textContent
+            .trim()
+            .toLowerCase()
+            .includes(
+              serviceName
+                .toLowerCase()
+                .substring(0, 18)
+            )
+        );
+
+
+      if (option) {
+
+        serviceSelect.value =
+          option.value;
+
+      }
+
+    });
+
+  });
+
+
+  /* =======================================================
+     CONTACT FORM
+     ======================================================= */
+
+  const contactForm =
+    document.querySelector(
+      ".contact-form-wrapper form"
+    );
+
+
+  if (contactForm) {
+
+    contactForm.addEventListener(
+      "submit",
+      () => {
+
+        try {
+
+          sessionStorage.setItem(
+            "beeSeeBytesFormSubmitted",
+            "true"
+          );
+
+        } catch (error) {
+
+          console.log(
+            "Session storage unavailable."
+          );
+
+        }
+
+      }
+    );
+
+  }
+
+
+  /* =======================================================
+     THANK YOU PAGE / MESSAGE
+     ======================================================= */
+
+  const urlParams =
+    new URLSearchParams(
+      window.location.search
+    );
+
+
+  const submitted =
+    urlParams.get("submitted");
+
+
+  const thankYou =
+    document.querySelector(".thank-you");
+
+
+  if (
+    submitted === "1" &&
+    thankYou
+  ) {
+
+    if (contactForm) {
+
+      contactForm.style.display =
+        "none";
+
+    }
+
+
+    thankYou.classList.add("show");
+
+
+    setTimeout(() => {
+
+      thankYou.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+
+    }, 300);
+
+  }
+
+
+  /* =======================================================
+     CURRENT YEAR
+     ======================================================= */
+
+  document.querySelectorAll(
+    ".current-year, #current-year"
+  ).forEach(element => {
+
+    element.textContent =
+      new Date().getFullYear();
+
+  });
+
+
+  /* =======================================================
+     ACTIVE NAVIGATION
+     ======================================================= */
+
+  const sections =
+    document.querySelectorAll(
+      "main section[id]"
+    );
+
+
+  const navLinks =
+    document.querySelectorAll(
+      'nav a[href^="#"]'
+    );
+
+
+  if (
+    sections.length &&
+    navLinks.length &&
+    "IntersectionObserver" in window
+  ) {
+
+    const sectionObserver =
+      new IntersectionObserver(
+        entries => {
+
+          entries.forEach(entry => {
+
+            if (!entry.isIntersecting) {
+              return;
+            }
+
+
+            const currentId =
+              entry.target.getAttribute(
+                "id"
+              );
+
+
+            navLinks.forEach(link => {
+
+              link.classList.remove(
+                "active-link"
+              );
+
+
+              if (
+                link.getAttribute("href") ===
+                `#${currentId}`
+              ) {
+
+                link.classList.add(
+                  "active-link"
+                );
+
+              }
+
+            });
+
+          });
+
+        },
+        {
+          rootMargin:
+            "-25% 0px -65% 0px"
+        }
+      );
+
+
+    sections.forEach(section => {
+
+      sectionObserver.observe(
+        section
+      );
+
+    });
+
+  }
+
+
+  /* =======================================================
+     ESCAPE KEY - CLOSE MENU
+     ======================================================= */
+
+  document.addEventListener(
+    "keydown",
+    event => {
+
+      if (
+        event.key === "Escape" &&
+        nav
+      ) {
+
+        nav.classList.remove(
+          "active"
+        );
+
+
+        if (menuToggle) {
+
+          menuToggle.setAttribute(
+            "aria-expanded",
+            "false"
+          );
+
+          menuToggle.innerHTML = "☰";
+
+        }
+
+      }
+
+    }
+  );
+
+
+  /* =======================================================
+     PREVENT FORM DOUBLE SUBMISSION
+     ======================================================= */
+
+  if (contactForm) {
+
+    contactForm.addEventListener(
+      "submit",
+      () => {
+
+        const submitButton =
+          contactForm.querySelector(
+            'button[type="submit"]'
+          );
+
+
+        if (submitButton) {
+
+          submitButton.disabled =
+            true;
+
+          submitButton.innerHTML =
+            "Sending Enquiry...";
+
+        }
+
+      }
+    );
+
+  }
+
+
+  /* =======================================================
+     CONSOLE
      ======================================================= */
 
   console.log(
